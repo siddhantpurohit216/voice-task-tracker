@@ -1,0 +1,19 @@
+.column {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  width: 32%;
+  display: flex;
+  flex-direction: column;
+}
+
+.column h2 {
+  margin-bottom: 16px;
+}
+
+.column-tasks {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
