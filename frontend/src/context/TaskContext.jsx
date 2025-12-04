@@ -11,9 +11,16 @@ export default function TaskProvider({ children }) {
   }, []);
 
   async function loadTasks() {
-    const data = await fetchTasks();
-    setTasks(data);
-  }
+  const data = await fetchTasks();
+
+  // sort by updated_at DESC
+  const sorted = data.sort(
+    (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+  );
+
+  setTasks(sorted);
+}
+
 
   return (
     <TaskContext.Provider value={{ tasks, setTasks, loadTasks }}>

@@ -3,19 +3,27 @@ import { pool } from "../config/db.js";
 export const TaskModel = {
   async getAll() {
     const result = await pool.query(
-      "SELECT * FROM tasks ORDER BY created_at DESC"
+      "SELECT * FROM tasks ORDER BY updated_at DESC"
     );
     return result.rows;
   },
 
-  async create({ title, description, status, priority, due_date }) {
-    const result = await pool.query(
-      `INSERT INTO tasks (title, description, status, priority, due_date)
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [title, description, status, priority, due_date]
-    );
-    return result.rows[0];
-  },
+async create({ title, description, status, priority, due_date }) {
+  const result = await pool.query(
+    `INSERT INTO tasks (title, description, status, priority, due_date)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING *`,
+    [
+      title,
+      description,
+      status,
+      priority,
+      due_date || null   // <-- ENSURE NULL IS PASSED
+    ]
+  );
+  return result.rows[0];
+}
+,
 
   async update(id, fields) {
     const keys = Object.keys(fields);

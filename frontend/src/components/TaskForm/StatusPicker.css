@@ -12,23 +12,19 @@
 /* Modal container */
 .issue-modal {
   width: 650px;
-  max-width: 90%;
   background: #1c1c1c;
-  padding: 24px;
+  padding: 20px;
   border-radius: 10px;
   color: #fff;
-
   display: flex;
   flex-direction: column;
-  overflow: hidden;              /* 🔥 prevents child overflow */
-  box-sizing: border-box;        /* 🔥 ensures padding not added outside */
 }
 
 /* Header */
 .modal-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .close-btn {
@@ -39,39 +35,34 @@
   cursor: pointer;
 }
 
-/* Form wrapper */
+/* Form layout fixes */
 .issue-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  width: 100%;
-  box-sizing: border-box;
+  gap: 15px;
 }
 
 /* Title */
 .issue-title {
   width: 100%;
   padding: 14px;
-  font-size: 18px;
-  background: #111;              /* 🔥 Fixed */
+  font-size: 20px;
+  background: #111;
   border: 1px solid #333;
   border-radius: 6px;
   color: white;
-  box-sizing: border-box;        /* 🔥 prevents overflow */
 }
 
 /* Description */
 .issue-desc {
   width: 100%;
-  height: 140px;
-  background: #111;              /* 🔥 Fixed */
+  height: 120px;
+  background: #111;
   border: 1px solid #333;
   border-radius: 6px;
-  padding: 12px;
+  padding: 10px;
   color: white;
   resize: none;
-  line-height: 1.4;
-  box-sizing: border-box;        /* 🔥 prevents overflow */
 }
 
 /* Tags row */
@@ -79,11 +70,8 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 
-/* Tag buttons */
 .tag-btn {
   background: #2a2a2a;
   border: 1px solid #444;
@@ -91,7 +79,6 @@
   border-radius: 8px;
   color: #ddd;
   cursor: pointer;
-  white-space: nowrap;
 }
 
 .tag-btn:hover {
@@ -110,14 +97,53 @@
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  margin-top: 10px;
 }
 
 .create-btn {
   background: #5865f2;
-  padding: 10px 20px;
+  padding: 10px 18px;
   border-radius: 8px;
   border: none;
   color: white;
   cursor: pointer;
+}
+
+
+.status-dropdown {
+  position: fixed;
+  background: #1f1f1f;
+  border: 1px solid #333;
+  width: 230px;
+  border-radius: 8px;
+  padding: 6px 0;
+  box-shadow: 0 4px 25px rgba(0,0,0,0.4);
+  z-index: 99999;
+}
+
+.dropdown-header {
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #aaa;
+  border-bottom: 1px solid #333;
+}
+
+.dropdown-item {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #ddd;
+}
+
+.dropdown-item:hover {
+  background: #333;
+}
+
+.dropdown-item.selected {
+  background: #2d2d2d;
+}
+
+.tick {
+  margin-left: auto;
+  color: #6cf;
 }

@@ -12,5 +12,3 @@ app.use("/tasks", taskRoutes);
 app.get("/", (req, res) => {
   res.send("Backend is runningh!");
 });
-
-export default app;

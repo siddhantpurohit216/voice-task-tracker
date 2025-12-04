@@ -10,7 +10,10 @@ export default function Board({ tasks }) {
         <Column
           key={col}
           title={col}
-          tasks={tasks.filter((t) => t.status === col)}
+          tasks={tasks
+  .filter((t) => t.status === col)
+  .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+}
         />
       ))}
     </div>
