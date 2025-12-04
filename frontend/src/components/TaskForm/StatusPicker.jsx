@@ -34,6 +34,7 @@ export default function StatusPicker({ anchorRef, selected, onSelect, onClose })
       ref={dropdownRef}
       className="status-dropdown"
       style={{ top: pos.top, left: pos.left }}
+      onClick={(e) => e.stopPropagation()}
     >
       <div className="dropdown-header">Set status…</div>
 

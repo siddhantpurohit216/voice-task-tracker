@@ -12,7 +12,6 @@ const PRIORITIES = [
   const dropdownRef = useRef(null);
   const [pos, setPos] = useState({ top: 0, left: 0 });
 
-  // Position the dropdown below the button
   useEffect(() => {
     const rect = anchorRef.current.getBoundingClientRect();
     setPos({
@@ -21,7 +20,7 @@ const PRIORITIES = [
     });
   }, []);
 
-  // Close when clicking outside
+  
   useEffect(() => {
     function handleClick(e) {
       if (
@@ -42,6 +41,7 @@ const PRIORITIES = [
       ref={dropdownRef}
       className="priority-dropdown"
       style={{ top: pos.top, left: pos.left }}
+      onClick={(e) => e.stopPropagation()} 
     >
 
       {PRIORITIES.map((p) => (

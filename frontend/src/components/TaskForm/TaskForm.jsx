@@ -7,144 +7,177 @@ import { createTask } from "../../api/tasks.js";
 import VoiceRecorder from "../VoiceInput/VoiceRecorder.jsx";
 
 export default function TaskFormModal({ status, onClose }) {
-  const { setTasks } = useContext(TaskContext);
+    const { setTasks } = useContext(TaskContext);
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState("Medium");
-  const [dueDate, setDueDate] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState(status);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [priority, setPriority] = useState("Medium");
+    const [dueDate, setDueDate] = useState("");
+    const [selectedStatus, setSelectedStatus] = useState(status);
 
-  const [showPriority, setShowPriority] = useState(false);
-  const [showStatus, setShowStatus] = useState(false);
+    const [liveTranscript, setLiveTranscript] = useState(""); 
 
-  const priorityBtnRef = useRef(null);
-  const statusBtnRef = useRef(null);
+    const [showPriority, setShowPriority] = useState(false);
+    const [showStatus, setShowStatus] = useState(false);
 
- async function handleSubmit(e) {
-  e.preventDefault();
+    const priorityBtnRef = useRef(null);
+    const statusBtnRef = useRef(null);
 
-  const newTask = {
-    title,
-    description,
-    status: selectedStatus,
-    priority,
-    due_date: dueDate,
-  };
+    async function handleSubmit(e) {
+        e.preventDefault();
 
-  // Save to backend
-  const saved = await createTask(newTask);
-console.log("📤 Sending to backend:", newTask); 
-  // Update context state
-  setTasks((prev) =>
-    [...prev, saved].sort(
-      (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
-    )
-  );
+        const newTask = {
+            title,
+            description,
+            status: selectedStatus,
+            priority,
+            due_date: dueDate,
+        };
 
-  onClose();
-}
+        const saved = await createTask(newTask);
 
-  return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="issue-modal" onClick={(e) => e.stopPropagation()}>
-        {/* header */}
-        <div className="modal-header">
-          <h3>New issue</h3>
-          <button className="close-btn" onClick={onClose}>✕</button>
+        setTasks((prev) =>
+            [...prev, saved].sort(
+                (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+            )
+        );
+
+        onClose();
+    }
+
+   
+    function simulateAIParsing(finalTranscript) {
+        return {
+            title: "Dummy title from AI",
+            description: finalTranscript,
+            priority: "High",
+            status: "In Progress",
+            due_date: "2025-12-10",
+        };
+    }
+
+    return (
+        <div className="modal-backdrop" onClick={onClose}>
+            <div className="issue-modal" onClick={(e) => e.stopPropagation()}>
+
+                <div className="modal-header">
+                    <h3>New issue</h3>
+                    <button className="close-btn" onClick={onClose}>✕</button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="issue-form">
+
+                    <input
+                        className="issue-title"
+                        placeholder="Issue title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        required
+                    />
+
+                    <textarea
+                        className="issue-desc"
+                        placeholder="Add description..."
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                    />
+
+
+
+                    <div className="issue-tags">
+                        <button
+                            ref={priorityBtnRef}
+                            type="button"
+                            className="tag-btn"
+                            onClick={() => {
+                                setShowPriority(true);
+                                setShowStatus(false);
+                            }}
+                        >
+                            Priority: {priority}
+                        </button>
+
+                        <button
+                            ref={statusBtnRef}
+                            type="button"
+                            className="tag-btn"
+                            onClick={() => {
+                                setShowStatus(true);
+                                setShowPriority(false);
+                            }}
+                        >
+                            Status: {selectedStatus}
+                        </button>
+
+                        <input
+                            type="date"
+                            className="tag-date"
+                            value={dueDate}
+                            onChange={(e) => setDueDate(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="modal-footer">
+                        <button className="create-btn">Create issue</button>
+                    </div>
+                </form>
+
+            
+                <div className="live-box">
+                    <label>Live Transcription:</label>
+                    <div className="live-text">
+                        {liveTranscript || "Start speaking…"}
+                    </div>
+
+                    <div className="voice-box" onClick={(e) => e.stopPropagation()}>
+
+                        <VoiceRecorder
+                            onTranscription={(text, isFinal) => {
+                                if (!isFinal) {
+                                 
+                                    setLiveTranscript(text);
+                                    return;
+                                }
+
+                                const ai = simulateAIParsing(text);
+
+                                setTitle(ai.title);
+                                setDescription(ai.description);
+                                setPriority(ai.priority);
+                                setSelectedStatus(ai.status);
+                                setDueDate(ai.due_date);
+                            }}
+                        />
+
+                    </div>
+
+
+                </div>
+            </div>
+
+            {showPriority && (
+                <PriorityPicker
+                    anchorRef={priorityBtnRef}
+                    selected={priority}
+                    onSelect={(p) => {
+                        setPriority(p);
+                        setShowPriority(false);
+                    }}
+                    onClose={() => setShowPriority(false)}
+                />
+            )}
+
+            {showStatus && (
+                <StatusPicker
+                    anchorRef={statusBtnRef}
+                    selected={selectedStatus}
+                    onSelect={(s) => {
+                        setSelectedStatus(s);
+                        setShowStatus(false);
+                    }}
+                    onClose={() => setShowStatus(false)}
+                />
+            )}
         </div>
-
-        <form onSubmit={handleSubmit} className="issue-form">
-
-          {/* TITLE */}
-          <input
-            className="issue-title"
-            placeholder="Issue title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-
-          {/* DESCRIPTION */}
-          <textarea
-            className="issue-desc"
-            placeholder="Add description..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-
-          <div className="voice-box">
-  <VoiceRecorder
-    onTranscription={(text) => setDescription(text)}
-  />
-</div>
-
-
-          {/* FILTER TAG BUTTONS */}
-          <div className="issue-tags">
-            <button
-              ref={priorityBtnRef}
-              type="button"
-              className="tag-btn"
-              onClick={() => {
-                setShowPriority(true);
-                setShowStatus(false);
-              }}
-            >
-              Priority: {priority}
-            </button>
-
-            <button
-              ref={statusBtnRef}
-              type="button"
-              className="tag-btn"
-              onClick={() => {
-                setShowStatus(true);
-                setShowPriority(false);
-              }}
-            >
-              Status: {selectedStatus}
-            </button>
-
-            <input
-              type="date"
-              className="tag-date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-            />
-          </div>
-
-          <div className="modal-footer">
-            <button className="create-btn">Create issue</button>
-          </div>
-        </form>
-      </div>
-
-      {/* PRIORITY DROPDOWN */}
-      {showPriority && (
-        <PriorityPicker
-          anchorRef={priorityBtnRef}
-          selected={priority}
-          onSelect={(p) => {
-            setPriority(p);
-            setShowPriority(false);
-          }}
-          onClose={() => setShowPriority(false)}
-        />
-      )}
-
-      {/* STATUS DROPDOWN */}
-      {showStatus && (
-        <StatusPicker
-          anchorRef={statusBtnRef}
-          selected={selectedStatus}
-          onSelect={(s) => {
-            setSelectedStatus(s);
-            setShowStatus(false);
-          }}
-          onClose={() => setShowStatus(false)}
-        />
-      )}
-    </div>
-  );
+    );
 }
