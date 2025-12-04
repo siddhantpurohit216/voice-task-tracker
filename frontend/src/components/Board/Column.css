@@ -1,27 +1,27 @@
 .column {
-  background: #1e1e1e;
-  padding: 12px;
-  border-radius: 8px;
-  width: 280px;
+  background: #161616;
+  padding: 16px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
+  border: 1px solid #222;
+
+  flex: 1;              /* 🔥 columns expand evenly */
+  min-width: 280px;      /* prevent too narrow columns */
 }
 
-/* THIS PART scrolls */
+.column h2 {
+  color: #e5e5e5;
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
 .column-tasks {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  overflow-y: auto;      /* enables vertical scroll */
-  flex: 1;               /* fills remaining column height */
-  padding-right: 4px;    /* avoids scrollbar overlap */
-}
-
-/* Optional: nicer scrollbar */
-.column-tasks::-webkit-scrollbar {
-  width: 6px;
-}
-.column-tasks::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 3px;
+  gap: 10px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 4px;
 }

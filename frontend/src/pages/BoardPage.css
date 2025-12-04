@@ -1,22 +1,44 @@
+/* Full-page dark background */
 .board-page {
   padding: 24px;
-  background: #f7f8f9;
+  background: #0d0d0d;   /* deep black */
   height: 100vh;
+  color: #e5e5e5;        /* light gray text */
+  display: flex;
+  flex-direction: column;
 }
 
+/* Header styling (dark GitHub style) */
 .board-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  background: #161616;    /* dark panel */
+  padding: 16px 20px;
+  border-radius: 10px;
+  border: 1px solid #222;  
 }
 
+.board-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Add Task button */
 .add-btn {
-  background: #5c7cfa;
-  color: white;
+  background: #2a2f3a;   /* muted dark navy */
+  color: #e5e5e5;
   padding: 8px 16px;
   border-radius: 6px;
-  border: none;
+  border: 1px solid #3a3f4a;
   cursor: pointer;
   font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.add-btn:hover {
+  background: #343a46;
+  border-color: #444b57;
 }

@@ -1,6 +1,9 @@
 .board {
-  width: 100%;
   display: flex;
   gap: 20px;
   height: calc(100vh - 120px);
+  width: 100%;
+  background: #0d0d0d;
+  padding: 20px;
+  overflow-x: auto;  /* allow scroll for small screens */
 }
