@@ -6,6 +6,9 @@ import "./TaskForm.css";
 import { createTask } from "../../api/tasks.js";
 import VoiceRecorder from "../VoiceInput/VoiceRecorder.jsx";
 
+import { parseVoice } from "../../api/ai.js";
+
+
 export default function TaskFormModal({ status, onClose }) {
     const { setTasks } = useContext(TaskContext);
 
@@ -44,6 +47,23 @@ export default function TaskFormModal({ status, onClose }) {
 
         onClose();
     }
+
+    async function handleAIParsing(text) {
+  try {
+    const ai = await parseVoice(text);
+
+    setTitle(ai.title || "");
+    setDescription(ai.description || "");
+    setPriority(ai.priority || "Medium");
+    setSelectedStatus(ai.status || "To Do");
+    setDueDate(ai.due_date || "");
+
+  } catch (err) {
+    console.error("AI parsing error:", err);
+    alert("AI parsing failed");
+  }
+}
+
 
    
     function simulateAIParsing(finalTranscript) {
@@ -132,22 +152,19 @@ export default function TaskFormModal({ status, onClose }) {
                     <div className="voice-box" onClick={(e) => e.stopPropagation()}>
 
                         <VoiceRecorder
-                            onTranscription={(text, isFinal) => {
-                                if (!isFinal) {
-                                 
-                                    setLiveTranscript(text);
-                                    return;
-                                }
+  onTranscription={async (text, isFinal) => {
+    if (!isFinal) {
+      setLiveTranscript(text);
+      return;
+    }
 
-                                const ai = simulateAIParsing(text);
+    setLiveTranscript(text);
 
-                                setTitle(ai.title);
-                                setDescription(ai.description);
-                                setPriority(ai.priority);
-                                setSelectedStatus(ai.status);
-                                setDueDate(ai.due_date);
-                            }}
-                        />
+    // ⭐ Now simply call your helper!
+    handleAIParsing(text);
+  }}
+/>
+
 
                     </div>
 
