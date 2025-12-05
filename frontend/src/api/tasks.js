@@ -13,3 +13,14 @@ export async function createTask(data) {
   });
   return res.json();
 }
+
+export async function updateTask(id, data) {
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    method: "PATCH",    
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  return res.json();
+}
+

@@ -3,22 +3,24 @@ import { TaskContext } from "../../context/TaskContext";
 import PriorityPicker from "./PriorityPicker.jsx";
 import StatusPicker from "./StatusPicker.jsx";
 import "./TaskForm.css";
-import { createTask } from "../../api/tasks.js";
+import { createTask, updateTask } from "../../api/tasks.js";
 import VoiceRecorder from "../VoiceInput/VoiceRecorder.jsx";
 
-import { parseVoice } from "../../api/ai.js";
+import { parseVoiceCreate, parseVoiceEdit } from "../../api/ai.js";
 
 
-export default function TaskFormModal({ status, onClose }) {
+
+export default function TaskFormModal({ status, onClose, existingTask, mode = "create" }) {
     const { setTasks } = useContext(TaskContext);
 
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [priority, setPriority] = useState("Medium");
-    const [dueDate, setDueDate] = useState("");
+    const [title, setTitle] = useState(existingTask?.title || "");
+    const [priority, setPriority] = useState(existingTask?.priority || "Low");
+    const [dueDate, setDueDate] = useState(existingTask?.due_date || "");
+    const [description, setDescription] = useState(existingTask?.description || "");
+
     const [selectedStatus, setSelectedStatus] = useState(status);
 
-    const [liveTranscript, setLiveTranscript] = useState(""); 
+    const [liveTranscript, setLiveTranscript] = useState("");
 
     const [showPriority, setShowPriority] = useState(false);
     const [showStatus, setShowStatus] = useState(false);
@@ -29,43 +31,71 @@ export default function TaskFormModal({ status, onClose }) {
     async function handleSubmit(e) {
         e.preventDefault();
 
-        const newTask = {
+        const payload = {
             title,
             description,
             status: selectedStatus,
             priority,
-            due_date: dueDate,
+            due_date: dueDate || null,
         };
 
-        const saved = await createTask(newTask);
+        let saved;
 
-        setTasks((prev) =>
-            [...prev, saved].sort(
-                (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
-            )
-        );
+        if (mode === "edit") {
+            saved = await updateTask(existingTask.id, payload);
+
+            // Update TaskContext
+            setTasks((prev) =>
+                prev.map((t) => (t.id === saved.id ? saved : t))
+            );
+        }
+        else {
+            saved = await createTask(payload);
+
+            setTasks((prev) =>
+                [...prev, saved].sort(
+                    (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+                )
+            );
+        }
 
         onClose();
     }
 
     async function handleAIParsing(text) {
-  try {
-    const ai = await parseVoice(text);
+        try {
+            let ai;
 
-    setTitle(ai.title || "");
-    setDescription(ai.description || "");
-    setPriority(ai.priority || "Medium");
-    setSelectedStatus(ai.status || "To Do");
-    setDueDate(ai.due_date || "");
+            if (mode === "create") {
+                // FULL extraction
+                ai = await parseVoiceCreate(text);
 
-  } catch (err) {
-    console.error("AI parsing error:", err);
-    alert("AI parsing failed");
-  }
-}
+                setTitle(ai.title || "");
+                setDescription(ai.description || "");
+                setPriority(ai.priority || "Medium");
+                setSelectedStatus(ai.status || "To Do");
+                setDueDate(ai.due_date || "");
+            }
+
+            if (mode === "edit") {
+                // PARTIAL extraction
+                ai = await parseVoiceEdit(text, existingTask);
+
+                if (ai.title) setTitle(ai.title);
+                if (ai.description) setDescription(ai.description);
+                if (ai.priority) setPriority(ai.priority);
+                if (ai.status) setSelectedStatus(ai.status);
+                if (ai.due_date) setDueDate(ai.due_date);
+            }
+
+        } catch (err) {
+            console.error("AI parsing error:", err);
+            alert("AI parsing failed");
+        }
+    }
 
 
-   
+
     function simulateAIParsing(finalTranscript) {
         return {
             title: "Dummy title from AI",
@@ -138,11 +168,11 @@ export default function TaskFormModal({ status, onClose }) {
                     </div>
 
                     <div className="modal-footer">
-                        <button className="create-btn">Create issue</button>
+                        <button className="create-btn">{mode === "edit" ? "Update Issue" : "Create Issue"}</button>
                     </div>
                 </form>
 
-            
+
                 <div className="live-box">
                     <label>Live Transcription:</label>
                     <div className="live-text">
@@ -152,18 +182,17 @@ export default function TaskFormModal({ status, onClose }) {
                     <div className="voice-box" onClick={(e) => e.stopPropagation()}>
 
                         <VoiceRecorder
-  onTranscription={async (text, isFinal) => {
-    if (!isFinal) {
-      setLiveTranscript(text);
-      return;
-    }
+                            onTranscription={async (text, isFinal) => {
+                                if (!isFinal) {
+                                    setLiveTranscript(text);
+                                    return;
+                                }
 
-    setLiveTranscript(text);
+                                setLiveTranscript(text);
 
-    // ⭐ Now simply call your helper!
-    handleAIParsing(text);
-  }}
-/>
+                                handleAIParsing(text);
+                            }}
+                        />
 
 
                     </div>

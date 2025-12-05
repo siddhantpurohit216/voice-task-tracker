@@ -9,6 +9,6 @@ router.get("/", TaskController.getTasks);
 router.post("/", TaskController.createTask);
 router.patch("/:id", TaskController.updateTask);
 router.delete("/:id", TaskController.deleteTask);
-router.post("/parse", AiController.parseVoice); 
+
 
 export default router;

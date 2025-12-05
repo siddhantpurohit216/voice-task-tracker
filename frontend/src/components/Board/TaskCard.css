@@ -1,31 +1,124 @@
 .task-card {
+  position: relative;     
   padding: 14px;
-  background: #1c1c1c; /* dark */
+  background: #1c1c1c;
   border-radius: 8px;
-  border: 1px solid #262626; /* subtle border */
-  box-shadow: none; /* remove white-ish shadow */
-  cursor: grab;
+  border: 1px solid #262626;
   color: #e5e5e5;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.task-card .due {
-  font-size: 12px;
-  color: #999;
+/* Title */
+.task-title {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 600;
 }
 
-.priority {
+/* Container for Due + Priority */
+.task-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ====== Due badges ====== */
+.due {
   font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  width: fit-content;
   font-weight: 500;
 }
 
-.priority.high {
+.due-today {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffca28;
+  border: 1px solid rgba(255, 193, 7, 0.25);
+}
+
+.due-tomorrow {
+  background: rgba(100, 181, 246, 0.15);
+  color: #64b5f6;
+  border: 1px solid rgba(100, 181, 246, 0.25);
+}
+
+.due-overdue {
+  background: rgba(255, 82, 82, 0.15);
+  color: #ff5252;
+  border: 1px solid rgba(255, 82, 82, 0.25);
+}
+
+.due-normal {
+  background: rgba(255, 255, 255, 0.06);
+  color: #bbbbbb;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ====== Priority badges ====== */
+.priority-badge {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Colors */
+.priority-badge.high {
+  background: rgba(255, 82, 82, 0.2);
   color: #ff6b6b;
+  border: 1px solid rgba(255, 82, 82, 0.3);
 }
 
-.priority.medium {
+.priority-badge.medium {
+  background: rgba(100, 181, 246, 0.2);
   color: #4dabf7;
+  border: 1px solid rgba(100, 181, 246, 0.3);
 }
 
-.priority.low {
+.priority-badge.low {
+  background: rgba(105, 219, 124, 0.2);
   color: #69db7c;
+  border: 1px solid rgba(105, 219, 124, 0.3);
+}
+
+.task-title {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 600;
+
+  white-space: nowrap;        /* keep text on one line */
+  overflow: hidden;           /* hide overflowing text */
+  text-overflow: ellipsis;    /* add ... */
+  max-width: 100%;            /* required inside flex elements */
+  display: block;             /* ensures ellipsis works */
+}
+/* Edit button hidden by default */
+.edit-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #222;
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Show on hover */
+.task-card:hover .edit-btn {
+  opacity: 1;
+}
+
+/* Optional hover effect */
+.edit-btn:hover {
+  background: #333;
+  color: white;
 }

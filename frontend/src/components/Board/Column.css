@@ -1,3 +1,4 @@
+/* ========== Column Wrapper ========== */
 .column {
   background: #161616;
   padding: 16px;
@@ -6,17 +7,44 @@
   flex-direction: column;
   border: 1px solid #222;
 
-  flex: 1;              /* 🔥 columns expand evenly */
-  min-width: 280px;      /* prevent too narrow columns */
+  flex: 1;
+  min-width: 280px;
+  position: relative; /* allows sticky button */
 }
 
-.column h2 {
-  color: #e5e5e5;
-  margin-bottom: 16px;
+/* ========== Header ========== */
+.column-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #222;
+}
+
+.column-header h2 {
+  flex: 1;
+  margin: 0;
   font-size: 16px;
   font-weight: 600;
+  color: #e5e5e5;
 }
 
+.column-icon {
+  font-size: 18px;
+}
+
+.column-count {
+  background: #262626;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #bfbfbf;
+  border: 1px solid #333;
+}
+
+/* ========== Scrollable Tasks Area ========== */
 .column-tasks {
   display: flex;
   flex-direction: column;
@@ -24,4 +52,46 @@
   overflow-y: auto;
   flex: 1;
   padding-right: 4px;
+
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+}
+
+/* Custom Scrollbar */
+.column-tasks::-webkit-scrollbar {
+  width: 8px;
+}
+
+.column-tasks::-webkit-scrollbar-thumb {
+  background-color: #333;
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.column-tasks:hover::-webkit-scrollbar-thumb {
+  opacity: 1;
+}
+
+/* ========== Add Button (Sticky Bottom) ========== */
+.add-task-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 12px;
+
+  background: #1a1a1a;
+  border: 1px dashed #333;
+  color: #ccc;
+
+  font-size: 20px;
+  border-radius: 6px;
+  cursor: pointer;
+
+  position: sticky;
+  bottom: 0;
+}
+
+.add-task-btn:hover {
+  background: #222;
+  color: white;
 }
