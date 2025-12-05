@@ -1,23 +1,39 @@
 .task-card {
-  position: relative;     
+  position: relative;
   padding: 14px;
   background: #1c1c1c;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid #262626;
   color: #e5e5e5;
+
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+  cursor: grab;
 }
+
+/* Hover elevation */
+.task-card:hover {
+  transform: translateY(-2px);
+  border-color: #333;
+  background: #202020;
+}
+
 
 /* Title */
 .task-title {
   font-size: 14px;
-  margin: 0;
   font-weight: 600;
+  margin: 0;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Container for Due + Priority */
+/* Due + Priority alignment */
 .task-meta {
   display: flex;
   justify-content: space-between;
@@ -29,32 +45,32 @@
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 6px;
-  width: fit-content;
   font-weight: 500;
+  width: fit-content;
 }
 
 .due-today {
-  background: rgba(255, 193, 7, 0.15);
-  color: #ffca28;
-  border: 1px solid rgba(255, 193, 7, 0.25);
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffd54f;
+  border: 1px solid rgba(255, 193, 7, 0.3);
 }
 
 .due-tomorrow {
-  background: rgba(100, 181, 246, 0.15);
+  background: rgba(100, 181, 246, 0.12);
   color: #64b5f6;
-  border: 1px solid rgba(100, 181, 246, 0.25);
+  border: 1px solid rgba(100, 181, 246, 0.3);
 }
 
 .due-overdue {
-  background: rgba(255, 82, 82, 0.15);
-  color: #ff5252;
-  border: 1px solid rgba(255, 82, 82, 0.25);
+  background: rgba(255, 82, 82, 0.12);
+  color: #ef5350;
+  border: 1px solid rgba(255, 82, 82, 0.3);
 }
 
 .due-normal {
-  background: rgba(255, 255, 255, 0.06);
-  color: #bbbbbb;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  color: #c0c0c0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ====== Priority badges ====== */
@@ -66,50 +82,41 @@
   text-transform: capitalize;
 }
 
-/* Colors */
 .priority-badge.high {
-  background: rgba(255, 82, 82, 0.2);
+  background: rgba(255, 82, 82, 0.18);
   color: #ff6b6b;
   border: 1px solid rgba(255, 82, 82, 0.3);
 }
 
 .priority-badge.medium {
-  background: rgba(100, 181, 246, 0.2);
+  background: rgba(100, 181, 246, 0.18);
   color: #4dabf7;
   border: 1px solid rgba(100, 181, 246, 0.3);
 }
 
 .priority-badge.low {
-  background: rgba(105, 219, 124, 0.2);
+  background: rgba(105, 219, 124, 0.18);
   color: #69db7c;
   border: 1px solid rgba(105, 219, 124, 0.3);
 }
 
-.task-title {
-  font-size: 14px;
-  margin: 0;
-  font-weight: 600;
-
-  white-space: nowrap;        /* keep text on one line */
-  overflow: hidden;           /* hide overflowing text */
-  text-overflow: ellipsis;    /* add ... */
-  max-width: 100%;            /* required inside flex elements */
-  display: block;             /* ensures ellipsis works */
-}
-/* Edit button hidden by default */
+/* ====== Edit button ====== */
 .edit-btn {
   position: absolute;
   top: 8px;
   right: 8px;
+
   background: #222;
   border: 1px solid #333;
   color: #ccc;
+
   padding: 4px 6px;
   border-radius: 4px;
   font-size: 12px;
   cursor: pointer;
+
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, background 0.2s ease;
 }
 
 /* Show on hover */
@@ -117,7 +124,6 @@
   opacity: 1;
 }
 
-/* Optional hover effect */
 .edit-btn:hover {
   background: #333;
   color: white;

@@ -42,3 +42,34 @@
   background: #343a46;
   border-color: #444b57;
 }
+
+.view-toggle button {
+  background: #262626;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  color: #ccc;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.view-toggle .active {
+  background: #5c7cfa;
+  color: white;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.search-bar,
+.filter {
+  background: #262626;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  color: white;
+}

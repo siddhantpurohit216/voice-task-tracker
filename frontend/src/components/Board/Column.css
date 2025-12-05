@@ -2,15 +2,23 @@
 .column {
   background: #161616;
   padding: 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   border: 1px solid #222;
 
   flex: 1;
   min-width: 280px;
-  position: relative; /* allows sticky button */
+  position: relative;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
+
+/* Highlight column when dragging over */
+.column.drag-over {
+  border-color: #5c7cfa;
+  background: #1b1b1b;
+}
+
 
 /* ========== Header ========== */
 .column-header {
@@ -26,13 +34,14 @@
 .column-header h2 {
   flex: 1;
   margin: 0;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  color: #e5e5e5;
+  color: #f1f1f1;
 }
 
 .column-icon {
   font-size: 18px;
+  opacity: 0.9;
 }
 
 .column-count {
@@ -40,9 +49,10 @@
   padding: 3px 10px;
   border-radius: 12px;
   font-size: 12px;
-  color: #bfbfbf;
+  color: #d0d0d0;
   border: 1px solid #333;
 }
+
 
 /* ========== Scrollable Tasks Area ========== */
 .column-tasks {
@@ -57,9 +67,14 @@
   scrollbar-color: #333 transparent;
 }
 
+/* Smooth scroll */
+.column-tasks {
+  scroll-behavior: smooth;
+}
+
 /* Custom Scrollbar */
 .column-tasks::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .column-tasks::-webkit-scrollbar-thumb {
@@ -73,7 +88,8 @@
   opacity: 1;
 }
 
-/* ========== Add Button (Sticky Bottom) ========== */
+
+/* ========== Add Button ========== */
 .add-task-btn {
   width: 100%;
   padding: 10px;
@@ -89,9 +105,10 @@
 
   position: sticky;
   bottom: 0;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .add-task-btn:hover {
-  background: #222;
+  background: #262626;
   color: white;
 }

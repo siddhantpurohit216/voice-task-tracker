@@ -8,6 +8,8 @@ export default function TaskCard({ task }) {
   const { label, status } = getDueStatus(task.due_date);
 
   function getDueStatus(dateString) {
+    if (!dateString) return { label: "", status: "normal" };
+
     const date = new Date(dateString);
     const today = new Date();
 
@@ -33,8 +35,13 @@ export default function TaskCard({ task }) {
 
   return (
     <>
-      <div className="task-card">
-
+      <div
+        className="task-card"
+        draggable     // <-- 🔥 enables drag & drop
+        onDragStart={(e) => {
+          e.dataTransfer.setData("taskId", task.id);   // store task ID
+        }}
+      >
         {/* EDIT BUTTON (appears on hover) */}
         <button
           className="edit-btn"
@@ -60,7 +67,7 @@ export default function TaskCard({ task }) {
       {openEdit && (
         <TaskFormModal
           onClose={() => setOpenEdit(false)}
-          existingTask={task}          // 👉 IMPORTANT
+          existingTask={task}
           mode="edit"
         />
       )}

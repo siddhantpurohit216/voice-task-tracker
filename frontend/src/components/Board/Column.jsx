@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import TaskCard from "./TaskCard";
 import TaskFormModal from "../TaskForm/TaskForm.jsx";
+import { TaskContext } from "../../context/TaskContext";
+import { updateTask } from "../../api/tasks";
 import "./Column.css";
 
 export default function Column({ title, tasks }) {
   const [open, setOpen] = useState(false);
+  const { setTasks } = useContext(TaskContext);
 
   const iconMap = {
     "To Do": "⭕",
@@ -12,9 +15,32 @@ export default function Column({ title, tasks }) {
     "Done": "🟢",
   };
 
-  return (
-    <div className="column">
+  /** 
+   * Handle when a task is dropped into this column
+   */
+  function handleDrop(e) {
+    e.preventDefault();
 
+    const taskId = e.dataTransfer.getData("taskId");
+    if (!taskId) return;
+
+    // 1️⃣ Update UI immediately
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id == taskId ? { ...t, status: title } : t
+      )
+    );
+
+    // 2️⃣ Save to backend
+    updateTask(taskId, { status: title });
+  }
+
+  return (
+    <div
+      className="column"
+      onDragOver={(e) => e.preventDefault()}  // Allow drop
+      onDrop={handleDrop}                     // Handle drop
+    >
       {/* Header */}
       <div className="column-header">
         <span className="column-icon">{iconMap[title]}</span>
