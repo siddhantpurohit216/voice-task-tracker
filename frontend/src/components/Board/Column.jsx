@@ -1,13 +1,82 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import TaskCard from "./TaskCard";
 import TaskFormModal from "../TaskForm/TaskForm.jsx";
 import { TaskContext } from "../../context/TaskContext";
-import { updateTask } from "../../api/tasks";
+import { fetchTasksQuery, updateTask } from "../../api/tasks";
 import "./Column.css";
 
-export default function Column({ title, tasks }) {
+export default function Column({ title }) {
+
   const [open, setOpen] = useState(false);
   const { setTasks } = useContext(TaskContext);
+
+  const [items, setItems] = useState([]);  // tasks for this column
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(false); // ← IMPORTANT
+const didMount = useRef(false);
+
+  const scrollRef = useRef(null);
+
+  // Load first page
+  
+useEffect(() => {
+  if (!didMount.current) {
+    didMount.current = true;
+    loadMore();       // runs only ONCE even in StrictMode
+  }
+}, []);
+
+  async function loadMore() {
+    if (loading || !hasMore) return; 
+setLoading(true);
+    const newData = await fetchTasksQuery({
+      status: title,
+      page,
+      pageSize: 15,
+      sortBy: "updated_at",
+      sortDir: "desc",
+    });
+
+    if (newData.length === 0) {
+      setHasMore(false);
+      setLoading(false);
+      return;
+    }
+
+    setItems(prev => {
+  const merged = [...prev, ...newData];
+  const unique = Array.from(new Map(merged.map(t => [t.id, t])).values());
+  return unique;
+});
+
+    setPage(prev => prev + 1);
+  }
+
+  function handleScroll(e) {
+    const el = e.target;
+
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 10) {
+      loadMore();
+    }
+  }
+
+  // DRAG + DROP behavior (unchanged)
+  function handleDrop(e) {
+    e.preventDefault();
+    const taskId = e.dataTransfer.getData("taskId");
+    if (!taskId) return;
+
+    // Update UI globally
+    setTasks(prev =>
+      prev.map(t =>
+        t.id == taskId ? { ...t, status: title } : t
+      )
+    );
+
+    // Backend update
+    updateTask(taskId, { status: title });
+  }
 
   const iconMap = {
     "To Do": "⭕",
@@ -15,52 +84,32 @@ export default function Column({ title, tasks }) {
     "Done": "🟢",
   };
 
-  /** 
-   * Handle when a task is dropped into this column
-   */
-  function handleDrop(e) {
-    e.preventDefault();
-
-    const taskId = e.dataTransfer.getData("taskId");
-    if (!taskId) return;
-
-    // 1️⃣ Update UI immediately
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.id == taskId ? { ...t, status: title } : t
-      )
-    );
-
-    // 2️⃣ Save to backend
-    updateTask(taskId, { status: title });
-  }
-
   return (
     <div
       className="column"
-      onDragOver={(e) => e.preventDefault()}  // Allow drop
-      onDrop={handleDrop}                     // Handle drop
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={handleDrop}
     >
-      {/* Header */}
       <div className="column-header">
         <span className="column-icon">{iconMap[title]}</span>
         <h2>{title}</h2>
-        <span className="column-count">{tasks.length}</span>
+        <span className="column-count">{items.length}</span>
       </div>
 
-      {/* Scrollable Tasks Area */}
-      <div className="column-tasks">
-        {tasks.map((task) => (
+      <div
+        className="column-tasks"
+        ref={scrollRef}
+        onScroll={handleScroll}
+      >
+        {items.map(task => (
           <TaskCard key={task.id} task={task} />
         ))}
       </div>
 
-      {/* Sticky Add Button */}
       <button className="add-task-btn" onClick={() => setOpen(true)}>
         +
       </button>
 
-      {/* Modal */}
       {open && (
         <TaskFormModal
           status={title}

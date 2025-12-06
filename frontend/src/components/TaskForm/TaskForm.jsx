@@ -15,10 +15,16 @@ export default function TaskFormModal({ status, onClose, existingTask, mode = "c
 
     const [title, setTitle] = useState(existingTask?.title || "");
     const [priority, setPriority] = useState(existingTask?.priority || "Low");
-    const [dueDate, setDueDate] = useState(existingTask?.due_date || "");
+    const [dueDate, setDueDate] = useState(
+    normalizeDate(existingTask?.due_date)
+);
+
     const [description, setDescription] = useState(existingTask?.description || "");
 
-    const [selectedStatus, setSelectedStatus] = useState(status);
+    const [selectedStatus, setSelectedStatus] = useState(
+    existingTask?.status || status || "To Do"
+);
+
 
     const [liveTranscript, setLiveTranscript] = useState("");
 
@@ -61,6 +67,7 @@ export default function TaskFormModal({ status, onClose, existingTask, mode = "c
 
         onClose();
     }
+    
 
     async function handleAIParsing(text) {
         try {
@@ -85,7 +92,7 @@ export default function TaskFormModal({ status, onClose, existingTask, mode = "c
                 if (ai.description) setDescription(ai.description);
                 if (ai.priority) setPriority(ai.priority);
                 if (ai.status) setSelectedStatus(ai.status);
-                if (ai.due_date) setDueDate(ai.due_date);
+                if (ai.due_date) setDueDate(normalizeDate(ai.due_date));
             }
 
         } catch (err) {
@@ -95,16 +102,11 @@ export default function TaskFormModal({ status, onClose, existingTask, mode = "c
     }
 
 
+function normalizeDate(dateStr) {
+    if (!dateStr) return "";
+    return dateStr.substring(0, 10); // ALWAYS picks YYYY-MM-DD without timezone shift
+}
 
-    function simulateAIParsing(finalTranscript) {
-        return {
-            title: "Dummy title from AI",
-            description: finalTranscript,
-            priority: "High",
-            status: "In Progress",
-            due_date: "2025-12-10",
-        };
-    }
 
     return (
         <div className="modal-backdrop" onClick={onClose}>

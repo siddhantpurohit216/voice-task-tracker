@@ -49,4 +49,42 @@ async create({ title, description, status, priority, due_date }) {
     ]);
     return result.rows;
   },
+
+
+  // models/task.model.js
+async query({ page, pageSize, status, priority, search, sortBy, sortDir }) {
+  let base = `SELECT * FROM tasks`;
+  let where = [];
+  let params = [];
+  let i = 1;
+
+  if (status) {
+    where.push(`status = $${i++}`);
+    params.push(status);
+  }
+
+  if (priority) {
+    where.push(`priority = $${i++}`);
+    params.push(priority);
+  }
+
+  if (search) {
+    where.push(`(LOWER(title) LIKE $${i} OR LOWER(description) LIKE $${i})`);
+    params.push(`%${search.toLowerCase()}%`);
+    i++;
+  }
+
+  if (where.length > 0) {
+    base += " WHERE " + where.join(" AND ");
+  }
+
+  base += ` ORDER BY ${sortBy} ${sortDir}`;
+
+  const offset = (page - 1) * pageSize;
+  base += ` LIMIT ${pageSize} OFFSET ${offset}`;
+
+  const result = await pool.query(base, params);
+  return result.rows;
+}
+
 };

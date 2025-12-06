@@ -24,3 +24,10 @@ export async function updateTask(id, data) {
   return res.json();
 }
 
+export async function fetchTasksQuery(params) {
+  const query = new URLSearchParams(params).toString();
+  const res = await fetch(`${BASE_URL}/query?${query}`);
+  return res.json();
+}
+
+

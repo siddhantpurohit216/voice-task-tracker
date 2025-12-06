@@ -3,6 +3,9 @@ import { TaskContext } from "../context/TaskContext";
 import Board from "../components/Board/Board.jsx";
 import ListView from "../components/ListView/ListView.jsx";
 import "./BoardPage.css";
+import useDebounce from "../hooks/useDebounce";
+
+
 
 export default function BoardPage() {
   const { tasks } = useContext(TaskContext);
@@ -11,7 +14,7 @@ export default function BoardPage() {
   const [search, setSearch] = useState("");
   const [filterPriority, setFilterPriority] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-
+  const debouncedSearch = useDebounce(search, 400);
   const filteredTasks = tasks.filter((t) => {
     const matchesSearch =
       t.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -82,10 +85,15 @@ export default function BoardPage() {
 
       {/* ACTUAL VIEW */}
       {view === "board" ? (
-        <Board tasks={filteredTasks} />
+        <Board />
       ) : (
-        <ListView tasks={filteredTasks} />
+        <ListView
+          search={search}
+          filterPriority={filterPriority}
+          filterStatus={filterStatus}
+        />
       )}
+
     </div>
   );
 }

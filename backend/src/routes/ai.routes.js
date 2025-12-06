@@ -5,8 +5,8 @@ const router = express.Router();
 
 //router.post("/parse", AiController.parseVoice);
 
-router.post("/ai/parse-create", AiController.parseVoice);
-router.post("/ai/parse-edit", AiController.parseEdit);
+router.post("/parse-create", AiController.parseVoice);
+router.post("/parse-edit", AiController.parseEdit);
 
 
 export default router;

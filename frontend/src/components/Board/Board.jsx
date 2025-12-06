@@ -1,7 +1,7 @@
 import Column from "./Column";
 import "./Board.css";
 
-export default function Board({ tasks }) {
+export default function Board() {
   const columns = ["To Do", "In Progress", "Done"];
 
   return (
@@ -10,10 +10,6 @@ export default function Board({ tasks }) {
         <Column
           key={col}
           title={col}
-          tasks={tasks
-  .filter((t) => t.status === col)
-  .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
-}
         />
       ))}
     </div>

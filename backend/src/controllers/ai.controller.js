@@ -4,8 +4,10 @@ const client = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+import { AiService } from "../services/ai.service.js";
+
 export const AiController = {
-  async parseVoice(req, res) {
+ /* async parseVoice(req, res) {
     const { transcript } = req.body;
 
     if (!transcript) {
@@ -51,9 +53,9 @@ No extra text. Only raw JSON.
     }
   },
 
-  /* ----------------------------------------------------
+   ----------------------------------------------------
      EDIT MODE — Extract ONLY changed fields
-  ---------------------------------------------------- */
+  ----------------------------------------------------
   async parseEdit(req, res) {
     const { transcript, existingTask } = req.body;
 
@@ -121,5 +123,18 @@ Return: {}
       console.error("🛑 AI EDIT error:", err);
       res.status(500).json({ error: err.message });
     }
+  },
+
+ */
+   async parseVoice(req, res) {
+    const { transcript } = req.body;
+    const result = await AiService.parseCreate(transcript);
+    res.json(result);
+  },
+
+  async parseEdit(req, res) {
+    const { transcript, existingTask } = req.body;
+    const result = await AiService.parseEdit(transcript, existingTask);
+    res.json(result);
   }
 };

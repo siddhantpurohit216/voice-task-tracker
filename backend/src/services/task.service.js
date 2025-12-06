@@ -1,6 +1,8 @@
 import { TaskModel } from "../models/task.model.js";
+import { NotFoundError } from "../utils/AppError.js";
 
 export const TaskService = {
+
   async getAllTasks() {
     return TaskModel.getAll();
   },
@@ -10,14 +12,18 @@ export const TaskService = {
   },
 
   async updateTask(id, data) {
-    return TaskModel.update(id, data);
+    const updated = await TaskModel.update(id, data);
+    if (!updated) throw new NotFoundError("Task not found");
+    return updated;
   },
 
   async deleteTask(id) {
-    return TaskModel.delete(id);
+    const deleted = await TaskModel.delete(id);
+    if (!deleted) throw new NotFoundError("Task not found");
+    return deleted;
   },
 
-  async filterByStatus(status) {
-    return TaskModel.getByStatus(status);
-  },
+  async queryTasks(filters) {
+    return TaskModel.query(filters);
+  }
 };

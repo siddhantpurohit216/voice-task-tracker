@@ -1,5 +1,5 @@
-const CREATE_AI_URL = "http://localhost:5003/ai/ai/parse-create";
-const EDIT_AI_URL = "http://localhost:5003/ai/ai/parse-edit";
+const CREATE_AI_URL = "http://localhost:5003/ai/parse-create";
+const EDIT_AI_URL = "http://localhost:5003/ai/parse-edit";
 
 export async function parseVoiceCreate(transcript) {
   const res = await fetch(CREATE_AI_URL, {
