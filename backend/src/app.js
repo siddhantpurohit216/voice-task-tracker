@@ -14,7 +14,7 @@ app.use("/tasks", taskRoutes);
 app.use("/ai", aiRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Backend is runningh!");
+  res.send("Backend is RUNNING!");
 });
 app.use(errorHandler);
 

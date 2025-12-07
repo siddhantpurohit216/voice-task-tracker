@@ -37,10 +37,10 @@ export default function TaskCard({ task }) {
     <>
       <div
         className="task-card"
-        draggable     // <-- 🔥 enables drag & drop
-        onDragStart={(e) => {
-          e.dataTransfer.setData("taskId", task.id);   // store task ID
-        }}
+        draggable    
+       onDragStart={(e) => {
+    e.dataTransfer.setData("task", JSON.stringify(task)); 
+  }}
       >
         {/* EDIT BUTTON (appears on hover) */}
         <button

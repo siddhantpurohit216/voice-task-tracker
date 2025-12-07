@@ -18,7 +18,7 @@ async create({ title, description, status, priority, due_date }) {
       description,
       status,
       priority,
-      due_date || null   // <-- ENSURE NULL IS PASSED
+      due_date || null   
     ]
   );
   return result.rows[0];
@@ -51,7 +51,7 @@ async create({ title, description, status, priority, due_date }) {
   },
 
 
-  // models/task.model.js
+
 async query({ page, pageSize, status, priority, search, sortBy, sortDir }) {
   let base = `SELECT * FROM tasks`;
   let where = [];

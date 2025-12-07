@@ -20,8 +20,8 @@
 
   display: flex;
   flex-direction: column;
-  overflow: hidden;              /* 🔥 prevents child overflow */
-  box-sizing: border-box;        /* 🔥 ensures padding not added outside */
+  overflow: hidden;         
+  box-sizing: border-box;      
 }
 
 /* Header */
@@ -53,25 +53,25 @@
   width: 100%;
   padding: 14px;
   font-size: 18px;
-  background: #111;              /* 🔥 Fixed */
+  background: #111;             
   border: 1px solid #333;
   border-radius: 6px;
   color: white;
-  box-sizing: border-box;        /* 🔥 prevents overflow */
+  box-sizing: border-box;        
 }
 
 /* Description */
 .issue-desc {
   width: 100%;
   height: 140px;
-  background: #111;              /* 🔥 Fixed */
+  background: #111;         
   border: 1px solid #333;
   border-radius: 6px;
   padding: 12px;
   color: white;
   resize: none;
   line-height: 1.4;
-  box-sizing: border-box;        /* 🔥 prevents overflow */
+  box-sizing: border-box;       
 }
 
 /* Tags row */

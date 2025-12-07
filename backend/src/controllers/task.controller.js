@@ -35,7 +35,6 @@ export const TaskController = {
     res.json({ message: "Deleted successfully" });
   },
 
-  // controllers/task.controller.js
 async queryTasks(req, res) {
   try {
     const { 

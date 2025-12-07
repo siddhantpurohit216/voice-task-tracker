@@ -2,7 +2,7 @@ import "./PriorityPicker.css";
 import { useEffect, useRef, useState } from "react";
 const PRIORITIES = [
   { label: "No priority" },
-  { label: "Urgent", icon: "!" },
+  { label: "Urgent(TEST)", icon: "!" },
   { label: "High", icon: "📶" },
   { label: "Medium", icon: "📶" },
   { label: "Low", icon: "📶" }

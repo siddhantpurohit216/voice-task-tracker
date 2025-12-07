@@ -5,31 +5,60 @@ import { TaskContext } from "../../context/TaskContext";
 import { fetchTasksQuery, updateTask } from "../../api/tasks";
 import "./Column.css";
 
+
 export default function Column({ title }) {
 
   const [open, setOpen] = useState(false);
   const { setTasks } = useContext(TaskContext);
+  const { taskEvents, setTaskEvents } = useContext(TaskContext);
 
-  const [items, setItems] = useState([]);  // tasks for this column
+  const [items, setItems] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-    const [loading, setLoading] = useState(false); // ← IMPORTANT
-const didMount = useRef(false);
+  const [loading, setLoading] = useState(false);
+  const didMount = useRef(false);
 
   const scrollRef = useRef(null);
+  useEffect(() => {
+    loadMore();
+  }, []);
 
-  // Load first page
-  
-useEffect(() => {
-  if (!didMount.current) {
-    didMount.current = true;
-    loadMore();       // runs only ONCE even in StrictMode
-  }
-}, []);
+  useEffect(() => {
+    if (taskEvents.created && taskEvents.created.status === title) {
+      setItems(prev => [taskEvents.created, ...prev]);
+    }
+  }, [taskEvents.created]);
+
+  useEffect(() => {
+    if (!taskEvents.updated) return;
+
+    const t = taskEvents.updated;
+
+
+    if (t.status === title) {
+      setItems(prev =>
+        prev.map(i => (i.id === t.id ? t : i))
+      );
+    }
+  }, [taskEvents.updated]);
+
+  useEffect(() => {
+    if (!taskEvents.moved) return;
+
+    const t = taskEvents.moved;
+
+    if (t.status === title) {
+
+      setItems(prev => [t, ...prev]);
+    } else {
+
+      setItems(prev => prev.filter(i => i.id !== t.id));
+    }
+  }, [taskEvents.moved]);
 
   async function loadMore() {
-    if (loading || !hasMore) return; 
-setLoading(true);
+    if (loading || !hasMore) return;
+    setLoading(true);
     const newData = await fetchTasksQuery({
       status: title,
       page,
@@ -45,10 +74,15 @@ setLoading(true);
     }
 
     setItems(prev => {
-  const merged = [...prev, ...newData];
-  const unique = Array.from(new Map(merged.map(t => [t.id, t])).values());
-  return unique;
-});
+      const merged = [...prev, ...newData];
+      return Array.from(new Map(merged.map(t => [t.id, t])).values());
+    });
+
+
+    setTasks(prev => {
+      const merged = [...prev, ...newData];
+      return Array.from(new Map(merged.map(t => [t.id, t])).values());
+    });
 
     setPage(prev => prev + 1);
   }
@@ -61,22 +95,32 @@ setLoading(true);
     }
   }
 
-  // DRAG + DROP behavior (unchanged)
   function handleDrop(e) {
     e.preventDefault();
-    const taskId = e.dataTransfer.getData("taskId");
-    if (!taskId) return;
 
-    // Update UI globally
-    setTasks(prev =>
-      prev.map(t =>
-        t.id == taskId ? { ...t, status: title } : t
-      )
-    );
+    const data = e.dataTransfer.getData("task");
+    if (!data) return;
 
-    // Backend update
-    updateTask(taskId, { status: title });
+    const task = JSON.parse(data);
+    if (task.status === title) return;
+    const updatedTask = {
+      ...task,
+      status: title
+    };
+
+    setTaskEvents((ev) => ({ ...ev, moved: updatedTask }));
+
+
+    updateTask(task.id, {
+      title: task.title,
+      description: task.description,
+      priority: task.priority,
+      status: title,
+      due_date: task.due_date
+    });
+
   }
+
 
   const iconMap = {
     "To Do": "⭕",

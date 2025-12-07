@@ -11,19 +11,20 @@ import { parseVoiceCreate, parseVoiceEdit } from "../../api/ai.js";
 
 
 export default function TaskFormModal({ status, onClose, existingTask, mode = "create" }) {
+    const { setTaskEvents } = useContext(TaskContext);
     const { setTasks } = useContext(TaskContext);
 
     const [title, setTitle] = useState(existingTask?.title || "");
     const [priority, setPriority] = useState(existingTask?.priority || "Low");
     const [dueDate, setDueDate] = useState(
-    normalizeDate(existingTask?.due_date)
-);
+        normalizeDate(existingTask?.due_date)
+    );
 
     const [description, setDescription] = useState(existingTask?.description || "");
 
     const [selectedStatus, setSelectedStatus] = useState(
-    existingTask?.status || status || "To Do"
-);
+        existingTask?.status || status || "To Do"
+    );
 
 
     const [liveTranscript, setLiveTranscript] = useState("");
@@ -34,40 +35,39 @@ export default function TaskFormModal({ status, onClose, existingTask, mode = "c
     const priorityBtnRef = useRef(null);
     const statusBtnRef = useRef(null);
 
-    async function handleSubmit(e) {
-        e.preventDefault();
 
-        const payload = {
-            title,
-            description,
-            status: selectedStatus,
-            priority,
-            due_date: dueDate || null,
-        };
 
-        let saved;
+async function handleSubmit(e) {
+  e.preventDefault();
 
-        if (mode === "edit") {
-            saved = await updateTask(existingTask.id, payload);
+  const payload = {
+    title,
+    description,
+    status: selectedStatus,
+    priority,
+    due_date: dueDate || null,
+  };
 
-            // Update TaskContext
-            setTasks((prev) =>
-                prev.map((t) => (t.id === saved.id ? saved : t))
-            );
-        }
-        else {
-            saved = await createTask(payload);
+  let saved;
 
-            setTasks((prev) =>
-                [...prev, saved].sort(
-                    (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
-                )
-            );
-        }
+  if (mode === "edit") {
+    saved = await updateTask(existingTask.id, payload);
 
-        onClose();
+    const statusChanged = existingTask.status !== saved.status;
+
+    if (statusChanged) {
+      setTaskEvents(ev => ({ ...ev, moved: saved }));
+    } else {
+      setTaskEvents(ev => ({ ...ev, updated: saved }));
     }
-    
+  } else {
+    saved = await createTask(payload);
+    setTaskEvents(ev => ({ ...ev, created: saved }));
+  }
+
+  onClose();
+}
+
 
     async function handleAIParsing(text) {
         try {
@@ -102,10 +102,10 @@ export default function TaskFormModal({ status, onClose, existingTask, mode = "c
     }
 
 
-function normalizeDate(dateStr) {
-    if (!dateStr) return "";
-    return dateStr.substring(0, 10); // ALWAYS picks YYYY-MM-DD without timezone shift
-}
+    function normalizeDate(dateStr) {
+        if (!dateStr) return "";
+        return dateStr.substring(0, 10); 
+    }
 
 
     return (

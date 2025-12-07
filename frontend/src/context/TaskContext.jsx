@@ -4,10 +4,15 @@ export const TaskContext = createContext();
 
 export default function TaskProvider({ children }) {
   const [tasks, setTasks] = useState([]); 
-  // used only for UI sync (drag + drop)
+  const [taskEvents, setTaskEvents] = useState({
+    created: null,
+    updated: null,
+    moved: null,
+    deleted: null,
+  });
 
   return (
-    <TaskContext.Provider value={{ tasks, setTasks }}>
+    <TaskContext.Provider value={{ tasks, setTasks, taskEvents, setTaskEvents }}>
       {children}
     </TaskContext.Provider>
   );

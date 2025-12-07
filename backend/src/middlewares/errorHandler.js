@@ -2,7 +2,7 @@
 import { AppError } from "../utils/AppError.js";
 
 export function errorHandler(err, req, res, next) {
-  console.error("🔥 ERROR:", err);
+  console.error("ERROR:", err);
 
   // If it's an AppError → return the custom status + message
   if (err instanceof AppError) {
