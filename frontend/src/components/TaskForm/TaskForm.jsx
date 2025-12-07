@@ -113,7 +113,7 @@ async function handleSubmit(e) {
             <div className="issue-modal" onClick={(e) => e.stopPropagation()}>
 
                 <div className="modal-header">
-                    <h3>New issue</h3>
+                    <h3>{mode === "edit" ? "Edit Issue" : "New Issue"}</h3>
                     <button className="close-btn" onClick={onClose}>✕</button>
                 </div>
 
